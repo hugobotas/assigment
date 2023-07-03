@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 
 let lisbon = ref([])
-let lisbon_graph = ref([['Time', 'Temperature']])
+let lisbon_graph = ref([])
 
 async function fetchData() {
   const response = await fetch(
@@ -11,22 +11,12 @@ async function fetchData() {
   const data = await response.json()
 
   for (const hour in data) {
-    lisbon.value = [
-      ...lisbon.value,
-      {
-        ...data[hour]['1200579'],
-        time: hour
-      }
-    ]
-
-    lisbon_graph.value = [
-      ...lisbon_graph.value,
-      [
-        hour, data[hour]['1200579'].temperatura
-      ]
-    ]
+    lisbon.value = [...lisbon.value, [hour, data[hour]['1200579']]]
+    lisbon_graph.value = [...lisbon_graph.value, [hour, data[hour]['1200579'].temperatura]]
   }
-  console.log(lisbon_graph);
+  lisbon.value.sort()
+  lisbon_graph.value.sort()
+  lisbon_graph.value = [['Time', 'Temperature'], ...lisbon_graph.value]
 }
 </script>
 <script>
@@ -38,26 +28,18 @@ export default {
   },
   data() {
     return {
-      // Array will be automatically processed with visualization.arrayToDataTable function
-      chartData: [
-        ['Year', 'Sales'],
-        ['2014', 1000],
-        ['2015', 1170],
-        ['2016', 660],
-        ['2017', 1030]
-      ],
       chartOptions: {
-        chart: {
-          title: 'Company Performance',
-          subtitle: 'Sales, Expenses, and Profit: 2014-2017'
+        title: '24h Temperature Variation in Lisbon',
+        width: 700,
+        height: 500,
+        vAxis: {
+          title: 'Temperature (ºC)'
         }
       }
     }
-  },
-  methods: {}
+  }
 }
 </script>
-
 <template>
   <div class="box">
     <button type="button" @click="fetchData">Get Data</button>
@@ -79,14 +61,14 @@ export default {
         </thead>
         <tbody>
           <tr v-for="hour in lisbon" v-bind:key="hour.key">
-            <td>{{ hour.time }}</td>
-            <td>{{ hour.humidade }}</td>
-            <td>{{ hour.idDireccVento }}</td>
-            <td>{{ hour.intensidadeVento }}</td>
-            <td>{{ hour.intensidadeVentoKM }}</td>
-            <td>{{ hour.pressao }}</td>
-            <td>{{ hour.radiacao }}</td>
-            <td>{{ hour.temperatura }}</td>
+            <td>{{ hour[0] }}</td>
+            <td>{{ hour[1].humidade }}</td>
+            <td>{{ hour[1].idDireccVento }}</td>
+            <td>{{ hour[1].intensidadeVento }}</td>
+            <td>{{ hour[1].intensidadeVentoKM }}</td>
+            <td>{{ hour[1].pressao }}</td>
+            <td>{{ hour[1].radiacao }}</td>
+            <td>{{ hour[1].temperatura }}</td>
           </tr>
         </tbody>
       </table>
