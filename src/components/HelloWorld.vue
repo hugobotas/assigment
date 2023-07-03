@@ -1,14 +1,26 @@
-<script setup lang="ts">
-defineProps<{
-  msg: string
-}>()
+<script setup>
+
+
+async function fetchData() {
+
+  const response = await fetch('https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json')
+  const data = await response.json();
+  let lisbon = {};
+  for (const hour in data) {
+     lisbon = {
+      ...lisbon,
+      [hour]: data[hour]['1200579']
+    }
+  }
+  console.log(lisbon);
+}
 </script>
 
 
 <template>
   <div class="greetings">
     <h1 class="green">HEYY</h1>
-    <button type="button" @click="getAllUsers">Click Me!</button>
+    <button type="button" @click="fetchData">Click Me!</button>
   </div>
 </template>
 
