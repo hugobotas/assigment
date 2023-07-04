@@ -1,13 +1,30 @@
-<script>
+<script lang="ts">
 import { GChart } from 'vue-google-charts'
-import { ref } from "vue";
-export default {
+import { defineComponent, ref } from 'vue'
+
+interface IStationEntries {
+  [key: string]: {
+    [key: number]: IStationEntry
+  }
+}
+interface IStationEntry {
+  humidade: number
+  idDireccVento: number
+  intensidadeVento: number
+  intensidadeVentoKM: number
+  precAcumulada: number
+  pressao: number
+  radiacao: number
+  temperatura: number
+}
+
+export default defineComponent({
   components: {
     GChart
   },
   setup() {
-    const lisbon = ref([])
-    const lisbon_graph = ref([])
+    const lisbon = ref<[string, IStationEntry][]>([])
+    const lisbon_graph = ref<[string, number | string][]>([])
     return {
       lisbon,
       lisbon_graph
@@ -30,7 +47,7 @@ export default {
       const response = await fetch(
         'https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json'
       )
-      const data = await response.json()
+      const data: IStationEntries = await response.json()
 
       for (const hour in data) {
         this.lisbon = [...this.lisbon, [hour, data[hour]['1200579']]]
@@ -41,7 +58,7 @@ export default {
       this.lisbon_graph = [['Time', 'Temperature'], ...this.lisbon_graph]
     }
   }
-}
+})
 </script>
 <template>
   <div class="box">
@@ -63,7 +80,7 @@ export default {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="hour in lisbon" v-bind:key="hour.key">
+          <tr v-for="hour in lisbon" v-bind:key="hour[0]">
             <td>{{ hour[0] }}</td>
             <td>{{ hour[1].humidade }}</td>
             <td>{{ hour[1].idDireccVento }}</td>
