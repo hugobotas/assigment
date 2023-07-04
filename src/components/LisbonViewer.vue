@@ -1,6 +1,6 @@
-<script lang="ts">
+<script setup lang="ts">
 import { GChart } from 'vue-google-charts'
-import { defineComponent, ref } from 'vue'
+import { ref } from 'vue'
 
 interface IStationEntries {
   [key: string]: {
@@ -17,48 +17,29 @@ interface IStationEntry {
   radiacao: number
   temperatura: number
 }
-
-export default defineComponent({
-  components: {
-    GChart
-  },
-  setup() {
-    const lisbon = ref<[string, IStationEntry][]>([])
-    const lisbon_graph = ref<[string, number | string][]>([])
-    return {
-      lisbon,
-      lisbon_graph
-    }
-  },
-  data() {
-    return {
-      chartOptions: {
-        title: '24h Temperature Variation in Lisbon',
-        width: 700,
-        height: 500,
-        vAxis: {
-          title: 'Temperature (ºC)'
-        }
-      }
-    }
-  },
-  methods: {
-    async fetchData() {
-      const response = await fetch(
-        'https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json'
-      )
-      const data: IStationEntries = await response.json()
-
-      for (const hour in data) {
-        this.lisbon = [...this.lisbon, [hour, data[hour]['1200579']]]
-        this.lisbon_graph = [...this.lisbon_graph, [hour, data[hour]['1200579'].temperatura]]
-      }
-      this.lisbon.sort()
-      this.lisbon_graph.sort()
-      this.lisbon_graph = [['Time', 'Temperature'], ...this.lisbon_graph]
-    }
+const lisbon = ref<[string, IStationEntry][]>([])
+const lisbon_graph = ref<[string, number | string][]>([])
+const chartOptions = {
+  title: '24h Temperature Variation in Lisbon',
+  width: 700,
+  height: 500,
+  vAxis: {
+    title: 'Temperature (ºC)'
   }
-})
+}
+async function fetchData() {
+  const response = await fetch(
+    'https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json'
+  )
+  const data: IStationEntries = await response.json()
+  for (const hour in data) {
+    lisbon.value = [...lisbon.value, [hour, data[hour]['1200579']]]
+    lisbon_graph.value = [...lisbon_graph.value, [hour, data[hour]['1200579'].temperatura]]
+  }
+  lisbon.value.sort()
+  lisbon_graph.value.sort()
+  lisbon_graph.value = [['Time', 'Temperature'], ...lisbon_graph.value]
+}
 </script>
 <template>
   <div class="box">
