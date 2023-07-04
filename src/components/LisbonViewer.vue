@@ -1,24 +1,3 @@
-<script setup>
-import { ref } from 'vue'
-
-let lisbon = ref([])
-let lisbon_graph = ref([])
-
-async function fetchData() {
-  const response = await fetch(
-    'https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json'
-  )
-  const data = await response.json()
-
-  for (const hour in data) {
-    lisbon.value = [...lisbon.value, [hour, data[hour]['1200579']]]
-    lisbon_graph.value = [...lisbon_graph.value, [hour, data[hour]['1200579'].temperatura]]
-  }
-  lisbon.value.sort()
-  lisbon_graph.value.sort()
-  lisbon_graph.value = [['Time', 'Temperature'], ...lisbon_graph.value]
-}
-</script>
 <script>
 import { GChart } from 'vue-google-charts'
 
@@ -28,6 +7,8 @@ export default {
   },
   data() {
     return {
+      lisbon: [],
+      lisbon_graph: [],
       chartOptions: {
         title: '24h Temperature Variation in Lisbon',
         width: 700,
@@ -36,6 +17,22 @@ export default {
           title: 'Temperature (ºC)'
         }
       }
+    }
+  },
+  methods: {
+    async fetchData() {
+      const response = await fetch(
+        'https://api.ipma.pt/open-data/observation/meteorology/stations/observations.json'
+      )
+      const data = await response.json()
+
+      for (const hour in data) {
+        this.lisbon = [...this.lisbon, [hour, data[hour]['1200579']]]
+        this.lisbon_graph = [...this.lisbon_graph, [hour, data[hour]['1200579'].temperatura]]
+      }
+      this.lisbon.sort()
+      this.lisbon_graph.sort()
+      this.lisbon_graph = [['Time', 'Temperature'], ...this.lisbon_graph]
     }
   }
 }
