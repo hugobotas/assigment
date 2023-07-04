@@ -1,14 +1,20 @@
 <script>
 import { GChart } from 'vue-google-charts'
-
+import { ref } from "vue";
 export default {
   components: {
     GChart
   },
+  setup() {
+    const lisbon = ref([])
+    const lisbon_graph = ref([])
+    return {
+      lisbon,
+      lisbon_graph
+    }
+  },
   data() {
     return {
-      lisbon: [],
-      lisbon_graph: [],
       chartOptions: {
         title: '24h Temperature Variation in Lisbon',
         width: 700,
