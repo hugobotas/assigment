@@ -13,6 +13,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@babel/types": "^7.22.5",
+    "typescript-eslint": "^0.0.1-alpha.0",
     "vue": "^3.3.4",
     "vue-google-charts": "^1.1.0",
     "vue-router": "^4.2.2"

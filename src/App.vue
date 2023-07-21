@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import HelloWorld from "@/components/LisbonViewer.vue";
+import LisbonViewer from '@/components/LisbonViewer.vue'
 </script>
 
 <template>
-  <HelloWorld />
+  <LisbonViewer />
 </template>
-
-
